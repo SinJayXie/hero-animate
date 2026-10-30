@@ -238,12 +238,17 @@ export function createHeroTransition(
     });
   }
 
-  /** 清掉面板动效留下的内联样式 */
-  function resetEl(el: HTMLElement): void {
+  /**
+   * 清掉面板动效留下的内联样式。
+   * keepHidden：关闭结束时保持 opacity 0 —— 真实面板即将被卸载，
+   * 若此时恢复可见，会在卸载前多渲染一帧，表现为「关闭后闪一下」。
+   */
+  function resetEl(el: HTMLElement, keepHidden = false): void {
     el.style.removeProperty("transform");
     el.style.removeProperty("transform-origin");
     el.style.removeProperty("border-radius");
-    el.style.removeProperty("opacity");
+    if (keepHidden) el.style.opacity = "0";
+    else el.style.removeProperty("opacity");
   }
 
   function onEnter(el: Element, done: () => void): void {
@@ -515,6 +520,7 @@ export function createHeroTransition(
     const maskBlur = masked ? naturalMaskBlur(mask) : MASK_BLUR_NONE;
 
     if (prefersReducedMotion() || !panel) {
+      if (panel) panel.style.opacity = "0";
       finish();
       return;
     }
@@ -526,7 +532,7 @@ export function createHeroTransition(
       // 无锚点（如启动时自动弹出的弹窗）：缩向中心退场，保证有明确的关闭动效
       timeline = createTimeline({
         onComplete: () => {
-          resetEl(panel);
+          resetEl(panel, true);
           finish();
         },
       });
@@ -576,7 +582,7 @@ export function createHeroTransition(
       timeline = createTimeline({
         onComplete: () => {
           clearLayers();
-          resetEl(panel);
+          resetEl(panel, true);
           finish();
         },
       });
@@ -609,7 +615,7 @@ export function createHeroTransition(
     timeline = createTimeline({
       onComplete: () => {
         clearLayers();
-        resetEl(panel);
+        resetEl(panel, true);
         finish();
       },
     });
