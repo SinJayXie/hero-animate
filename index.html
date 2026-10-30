@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="hero-animate：iOS 风格「图标 ⇄ 窗口」形变转场库，框架无关核心 + Vue 3 / React 组件。"
+    />
+    <title>hero-animate · 图标 ⇄ 窗口形变转场</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="#top">hero-animate</a>
+        <nav class="site-nav">
+          <a href="#demos">在线示例</a>
+          <a href="#quickstart">快速开始</a>
+          <a href="#api">API</a>
+          <a href="#spring">弹簧参数</a>
+          <a class="site-nav__gh" href="https://github.com/SinJayXie/hero-animate" target="_blank" rel="noreferrer"
+            >GitHub ↗</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main class="page" id="top">
+      <section class="intro">
+        <p class="eyebrow">hero-animate · v0.1.0</p>
+        <h1>让图标自己<br />长成窗口</h1>
+        <p class="lede">
+          iOS 风格的共享元素形变转场：窗口从触发按钮的矩形展开，关闭时沿同一条路径收回原处。框架无关核心，附带 Vue 3 / React 开箱即用组件。
+        </p>
+        <div class="install">
+          <span class="install__label">install</span>
+          <code>pnpm add hero-animate animejs</code>
+        </div>
+        <ul class="badges">
+          <li>ESM</li>
+          <li>TypeScript</li>
+          <li>Vue 3</li>
+          <li>React 18+</li>
+          <li>Spring 可调</li>
+        </ul>
+      </section>
+
+      <section id="demos" class="section">
+        <div class="section-head">
+          <h2>在线示例</h2>
+          <p>页面里的弹窗与浮层都由本库驱动，点击图标试试。</p>
+        </div>
+
+        <div class="demo-grid">
+          <article class="demo-card">
+            <h3>Vue · 遮罩弹窗</h3>
+            <p>窗口从按钮位置长出；点击遮罩空白处收回。示例自定义了弹簧参数。</p>
+            <section id="vue-demo" class="demo-slot"></section>
+          </article>
+
+          <article class="demo-card">
+            <h3>React · 锚定浮层</h3>
+            <p><code>ghostOnly</code> 菜单从按钮右侧弹出，选择任意项即可收回。</p>
+            <section id="react-demo" class="demo-slot"></section>
+          </article>
+        </div>
+      </section>
+
+      <section id="quickstart" class="section">
+        <div class="section-head">
+          <h2>快速开始</h2>
+          <p><code>animejs</code> 为必装 peer 依赖；<code>vue</code> / <code>react</code> 仅在引入对应子入口时需要。</p>
+        </div>
+
+        <div class="code-grid">
+          <article class="code-card">
+            <header><span class="code-card__dot code-card__dot--vue"></span>Vue 3</header>
+            <pre><code>&lt;script setup lang="ts"&gt;
+import { ref } from "vue";
+import { HeroTransition } from "hero-animate/vue";
+
+const open = ref(false);
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button @click="open = true"&gt;📁&lt;/button&gt;
+
+  &lt;HeroTransition :open="open" class="modal-mask"
+                  @exited="open = false"&gt;
+    &lt;div class="modal-panel"&gt;…&lt;/div&gt;
+  &lt;/HeroTransition&gt;
+&lt;/template&gt;</code></pre>
+          </article>
+
+          <article class="code-card">
+            <header><span class="code-card__dot code-card__dot--react"></span>React</header>
+            <pre><code>import { useState } from "react";
+import { HeroTransition } from "hero-animate/react";
+
+export function Demo() {
+  const [open, setOpen] = useState(false);
+  return (
+    &lt;&gt;
+      &lt;button onClick={() =&gt; setOpen(true)}&gt;📁&lt;/button&gt;
+
+      &lt;HeroTransition open={open} className="modal-mask"&gt;
+        &lt;div className="modal-panel"&gt;…&lt;/div&gt;
+      &lt;/HeroTransition&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+          </article>
+
+          <article class="code-card code-card--wide">
+            <header><span class="code-card__dot code-card__dot--core"></span>核心 API · 任意框架 / 原生</header>
+            <pre><code>import { createHeroTransition } from "hero-animate";
+
+const hero = createHeroTransition(
+  (root) =&gt; root.querySelector(".modal-panel"),
+  { masked: true }
+);
+
+hero.onEnter(maskEl, () =&gt; {});  // 打开，结束调用 done
+hero.onLeave(maskEl, () =&gt; {});  // 关闭
+hero.cancel();                   // 中断并清理</code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section id="api" class="section">
+        <div class="section-head">
+          <h2>API</h2>
+          <p>核心选项与组件 props 一一对应，组件只是替你管理挂载与卸载时序。</p>
+        </div>
+
+        <h3 class="table-title">HeroOptions</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>选项</th><th>类型</th><th>默认值</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>masked</code></td><td><code>boolean</code></td><td><code>true</code></td>
+                <td>根元素是遮罩（内部找面板）；<code>false</code> 时根元素本身就是面板</td>
+              </tr>
+              <tr>
+                <td><code>panelSelector</code></td><td><code>string</code></td><td><code>".modal-panel"</code></td>
+                <td>面板选择器，用于在根元素内定位面板</td>
+              </tr>
+              <tr>
+                <td><code>anchor</code></td><td><code>() =&gt; HTMLElement | null</code></td><td>—</td>
+                <td>无指针来源时的锚点（快捷键打开等场景）</td>
+              </tr>
+              <tr>
+                <td><code>ghostOnly</code></td><td><code>boolean</code></td><td><code>false</code></td>
+                <td>只动画克隆体，不写真实浮层 transform</td>
+              </tr>
+              <tr>
+                <td><code>spring</code></td><td><code>HeroSpringParams</code></td><td>见下文</td>
+                <td>打开曲线弹簧参数</td>
+              </tr>
+              <tr>
+                <td><code>springAccel</code></td><td><code>HeroSpringParams</code></td><td>见下文</td>
+                <td>关闭曲线弹簧参数</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="table-title">组件 Props</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Prop</th><th>类型</th><th>默认值</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>open</code></td><td><code>boolean</code></td><td>—</td><td>必填，驱动打开 / 关闭</td></tr>
+              <tr><td><code>masked</code></td><td><code>boolean</code></td><td><code>true</code></td><td>同上</td></tr>
+              <tr><td><code>panelSelector</code></td><td><code>string</code></td><td><code>".modal-panel"</code></td><td>同上</td></tr>
+              <tr><td><code>anchor</code></td><td><code>() =&gt; HTMLElement | null</code></td><td>—</td><td>同上</td></tr>
+              <tr><td><code>ghostOnly</code></td><td><code>boolean</code></td><td><code>false</code></td><td>同上</td></tr>
+              <tr><td><code>spring</code> / <code>springAccel</code></td><td><code>HeroSpringParams</code></td><td>见下文</td><td>弹簧参数</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">
+          Vue：事件 <code>entered</code> / <code>exited</code>，其余 attrs 透传根元素。React：回调
+          <code>onEntered</code> / <code>onExited</code>，额外支持 <code>className</code> / <code>style</code> /
+          <code>children</code>。
+        </p>
+
+        <h3 class="table-title">HeroHandlers</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>成员</th><th>类型</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>onEnter</code></td><td><code>(el, done) =&gt; void</code></td><td>打开转场，结束调用 <code>done</code></td></tr>
+              <tr><td><code>onLeave</code></td><td><code>(el, done) =&gt; void</code></td><td>关闭转场，结束调用 <code>done</code></td></tr>
+              <tr><td><code>cancel</code></td><td><code>() =&gt; void</code></td><td>中断时间线、移除克隆层、还原被隐藏的触发元素</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="spring" class="section">
+        <div class="section-head">
+          <h2>弹簧参数</h2>
+          <p>只传想覆盖的字段，其余自动回落到 <code>SPRING_PARAMS</code>。打开与关闭曲线可分别配置。</p>
+        </div>
+
+        <div class="spring-grid">
+          <article class="code-card">
+            <header><span class="code-card__dot code-card__dot--core"></span>自定义</header>
+            <pre><code>import { createHeroTransition } from "hero-animate";
+
+createHeroTransition(getPanel, {
+  spring: { stiffness: 300, damping: 32 },
+  springAccel: { stiffness: 280, damping: 30 },
+});</code></pre>
+          </article>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>字段</th><th>含义</th><th>默认值</th></tr></thead>
+              <tbody>
+                <tr><td><code>mass</code></td><td>质量，越大越迟滞</td><td><code>1</code></td></tr>
+                <tr><td><code>stiffness</code></td><td>刚度，越大越快</td><td><code>250</code></td></tr>
+                <tr><td><code>damping</code></td><td>阻尼，越小回弹越明显</td><td><code>35</code></td></tr>
+                <tr><td><code>velocity</code></td><td>初速度</td><td><code>20</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="table-note">
+          默认值同时以 <code>SPRING_PARAMS</code> 导出，便于在业务侧复用：<code
+            >import { SPRING_PARAMS } from "hero-animate"</code
+          >。
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>使用须知</h2>
+        </div>
+        <ul class="notes">
+          <li>
+            <strong>CSS 约定：</strong>库不注入样式。遮罩的 <code>backdrop-filter</code> 会被读取为动画终点模糊值，面板圆角取
+            <code>border-radius</code> 自然值。
+          </li>
+          <li>
+            <strong>包含块：</strong>组件在原地渲染。若祖先带 <code>transform</code> / <code>filter</code> /
+            <code>backdrop-filter</code>，<code>position: fixed</code> 会以该祖先为包含块，建议把弹窗挂到
+            <code>body</code>（Vue <code>Teleport</code> / React Portal）。
+          </li>
+          <li>
+            <strong>触发源：</strong>创建转场时自动安装 pointerdown 追踪（800ms 内有效）；快捷键打开等场景用
+            <code>anchor</code> 指定起点与收回终点。
+          </li>
+          <li>
+            <strong>无障碍：</strong>系统启用 <code>prefers-reduced-motion: reduce</code> 时跳过动画，同步交回控制权。
+          </li>
+          <li>
+            <strong>无触发源：</strong>既无点击来源也无 <code>anchor</code> 时，面板以本体中心轻微缩放淡入 / 淡出。
+          </li>
+        </ul>
+      </section>
+
+      <footer class="site-footer">
+        <span>MIT © 2026 SinJayXie</span>
+        <nav>
+          <a href="https://github.com/SinJayXie/hero-animate" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.npmjs.com/package/hero-animate" target="_blank" rel="noreferrer">npm</a>
+          <a href="https://github.com/SinJayXie/hero-animate/issues" target="_blank" rel="noreferrer">Issues</a>
+        </nav>
+      </footer>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
