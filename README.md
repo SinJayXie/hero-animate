@@ -215,6 +215,21 @@ npm publish       # 发布（prepublishOnly 会自动构建）
 
 文档站通过 [deploy-docs.yml](./.github/workflows/deploy-docs.yml) 在 push 到 `main` 时自动发布到 GitHub Pages。首次部署前需在仓库 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**（`GITHUB_TOKEN` 无权自动创建 Pages 站点）。
 
+### 发布 Release
+
+版本号以 `package.json` 为准，推送 `v*` tag 即触发 [release.yml](./.github/workflows/release.yml)：
+
+```bash
+npm version patch        # 或 minor / major，自动提交并创建 vX.Y.Z tag
+git push --follow-tags   # 推送提交与 tag
+```
+
+工作流会校验 tag 与 `package.json` 版本一致、构建 `dist/`、执行 `npm pack`，并用自动生成的 release notes 创建 GitHub Release，同时附上打包好的 `.tgz`。需要发布到 npm 时再执行：
+
+```bash
+npm publish
+```
+
 ## License
 
 [MIT](./LICENSE) © SinJayXie

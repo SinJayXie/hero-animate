@@ -28,3 +28,6 @@ docs-dist
 # 本地工具产物
 .screenshots
 .trae-html-share-packages
+
+# npm pack 产物
+*.tgz
