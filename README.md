@@ -213,7 +213,7 @@ pnpm docs:build   # 构建文档站到 docs-dist/
 npm publish       # 发布（prepublishOnly 会自动构建）
 ```
 
-文档站通过 [deploy-docs.yml](./.github/workflows/deploy-docs.yml) 在 push 到 `main` 时自动发布到 GitHub Pages。
+文档站通过 [deploy-docs.yml](./.github/workflows/deploy-docs.yml) 在 push 到 `main` 时自动发布到 GitHub Pages。首次部署前需在仓库 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**（`GITHUB_TOKEN` 无权自动创建 Pages 站点）。
 
 ## License
 

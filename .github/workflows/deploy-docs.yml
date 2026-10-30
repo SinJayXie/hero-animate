@@ -31,10 +31,8 @@ jobs:
 
       - run: pnpm docs:build
 
+      # 首次部署前需在 Settings → Pages → Build and deployment 将 Source 设为 GitHub Actions
       - uses: actions/configure-pages@v5
-        with:
-          # 仓库尚未启用 Pages 时自动创建（Build and deployment → GitHub Actions）
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
