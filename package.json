@@ -1,6 +1,6 @@
 {
   "name": "hero-animate",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "iOS 风格「图标 ⇄ 窗口」形变转场，框架无关核心 + Vue/React 组件",
   "author": "SinJayXie",
