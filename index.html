@@ -8,6 +8,20 @@
       name="description"
       content="hero-animate：iOS 风格「图标 ⇄ 窗口」形变转场库，框架无关核心 + Vue 3 / React 组件。"
     />
+    <script>
+      // 首帧前写入主题，避免亮暗切换时闪烁
+      (function () {
+        try {
+          var stored = localStorage.getItem("hero-animate-theme");
+          var dark = stored
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <title>hero-animate · 图标 ⇄ 窗口形变转场</title>
   </head>
   <body>
@@ -22,6 +36,33 @@
           <a class="site-nav__gh" href="https://github.com/SinJayXie/hero-animate" target="_blank" rel="noreferrer"
             >GitHub ↗</a
           >
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            type="button"
+            aria-label="切换到暗色模式"
+            aria-pressed="false"
+            title="切换到暗色模式"
+          >
+            <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M21 12.8A8.5 8.5 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6" />
+              <path
+                d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
         </nav>
       </div>
     </header>
@@ -76,7 +117,7 @@
         <div class="code-grid">
           <article class="code-card">
             <header><span class="code-card__dot code-card__dot--vue"></span>Vue 3</header>
-            <pre><code>&lt;script setup lang="ts"&gt;
+            <pre><code class="language-markup">&lt;script setup lang="ts"&gt;
 import { ref } from "vue";
 import { HeroTransition } from "hero-animate/vue";
 
@@ -95,7 +136,7 @@ const open = ref(false);
 
           <article class="code-card">
             <header><span class="code-card__dot code-card__dot--react"></span>React</header>
-            <pre><code>import { useState } from "react";
+            <pre><code class="language-tsx">import { useState } from "react";
 import { HeroTransition } from "hero-animate/react";
 
 export function Demo() {
@@ -114,7 +155,7 @@ export function Demo() {
 
           <article class="code-card code-card--wide">
             <header><span class="code-card__dot code-card__dot--core"></span>核心 API · 任意框架 / 原生</header>
-            <pre><code>import { createHeroTransition } from "hero-animate";
+            <pre><code class="language-typescript">import { createHeroTransition } from "hero-animate";
 
 const hero = createHeroTransition(
   (root) =&gt; root.querySelector(".modal-panel"),
@@ -213,7 +254,7 @@ hero.cancel();                   // 中断并清理</code></pre>
         <div class="spring-grid">
           <article class="code-card">
             <header><span class="code-card__dot code-card__dot--core"></span>自定义</header>
-            <pre><code>import { createHeroTransition } from "hero-animate";
+            <pre><code class="language-typescript">import { createHeroTransition } from "hero-animate";
 
 createHeroTransition(getPanel, {
   spring: { stiffness: 300, damping: 32 },
