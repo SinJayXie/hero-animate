@@ -1,7 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { createHeroTransition } from "./heroTransition";
 import type { HeroSpringParams } from "./motion";
+
+/**
+ * 转场必须在浏览器绘制前启动。
+ * 用 useEffect 时，它晚于首帧绘制执行：面板挂载的那一帧会先以「未形变 + 完整尺寸」
+ * 被画出来，随后才跳到形变起点，表现为「先闪一下完整弹窗，再开始动画」。
+ * useLayoutEffect 在 DOM 变更后、绘制前执行，可彻底消除这一帧。
+ * SSR 没有 window，退回 useEffect 以避免服务端告警。
+ */
+const useIsoLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /** 当前转场阶段（用 ref 保存，不参与渲染） */
 type Phase = "closed" | "entering" | "open" | "leaving";
@@ -50,7 +60,8 @@ export function HeroTransition({
   const onEnteredRef = useRef(onEntered);
   const onExitedRef = useRef(onExited);
 
-  useEffect(() => {
+  // 与转场 effect 一样放在绘制前：保证 anchor / 回调在 onEnter 读取前已是最新值
+  useIsoLayoutEffect(() => {
     anchorRef.current = anchor;
     onEnteredRef.current = onEntered;
     onExitedRef.current = onExited;
@@ -76,7 +87,8 @@ export function HeroTransition({
     [masked, ghostOnly, panelSelector, springKey, springAccelKey]
   );
 
-  useEffect(() => {
+  // 驱动打开/关闭转场：必须在绘制前启动，否则首帧会先画出未形变的面板
+  useIsoLayoutEffect(() => {
     if (open) {
       if (!mounted) {
         setMounted(true);
